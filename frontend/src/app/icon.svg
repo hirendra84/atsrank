@@ -1,0 +1,42 @@
+<svg 
+  viewBox="2 1 22 30" 
+  fill="none" 
+  xmlns="http://www.w3.org/2000/svg"
+>
+  {/* Document Page Silhouette (Navy/Slate outline) */}
+  <path 
+    d="M4 2.5 H16.5 L22.5 8.5 V27.5 C22.5 28.6046 21.6046 29.5 20.5 29.5 H5.5 C4.39543 29.5 3.5 28.6046 3.5 27.5 V4.5 C3.5 3.39543 4.39543 2.5 5.5 2.5 Z" 
+    stroke="#1E293B" 
+    strokeWidth="2.5" 
+    strokeLinejoin="round" 
+    fill="none"
+  />
+  {/* Folded Corner Flap (Blue fill) */}
+  <path d="M16.5 2.5 V8.5 H22.5 Z" fill="#2563EB"/>
+  {/* Navy outline overlay for clean fold border */}
+  <path 
+    d="M16.5 2.5 V8.5 H22.5" 
+    stroke="#1E293B" 
+    strokeWidth="2.5" 
+    strokeLinejoin="round" 
+    fill="none"
+  />
+
+  {/* Bar Chart + Growth Arrow inside */}
+  {/* Bar 1 (Navy/Slate) */}
+  <rect x="7" y="19" width="2.5" height="6" rx="0.75" fill="#1E293B"/>
+  {/* Bar 2 (Emerald Green) */}
+  <rect x="11.5" y="14" width="2.5" height="11" rx="0.75" fill="#10B981"/>
+  {/* Bar 3 (Electric Neon Blue) */}
+  <rect x="16" y="9" width="2.5" height="16" rx="0.75" fill="#2563EB"/>
+
+  {/* Upward Growth Arrow (Sleek Green line sweeping up through the bars) */}
+  <path 
+    d="M6.5 21.5 L12 16 L17.5 10.5 M13.5 10.5 H17.5 V14.5" 
+    stroke="#10B981" 
+    strokeWidth="2" 
+    strokeLinecap="round" 
+    strokeLinejoin="round" 
+    fill="none"
+  />
+</svg>
