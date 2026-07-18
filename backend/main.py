@@ -208,7 +208,7 @@ async def analyze_resume(
     if not file.filename.endswith(".pdf"):
         raise HTTPException(status_code=400, detail="Only PDF files are supported")
         
-    file_path = f"temp_{file.filename}"
+    file_path = f"/tmp/temp_{file.filename}"
     try:
         with open(file_path, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
