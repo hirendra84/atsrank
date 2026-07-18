@@ -69,9 +69,8 @@ export default function FeaturesPage() {
   ];
 
   const currentFeature = features.find(f => f.id === activeTab) || features[0];
-
   return (
-    <div className="bg-slate-50 text-slate-900 font-sans relative overflow-x-hidden flex-grow">
+    <div className="bg-white text-slate-900 font-sans relative overflow-x-hidden flex-grow">
       {/* Background radial glow */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[600px] bg-gradient-to-b from-blue-50/70 via-indigo-50/20 to-transparent -z-10 rounded-full blur-3xl" />
 
