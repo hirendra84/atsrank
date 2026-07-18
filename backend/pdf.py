@@ -127,11 +127,11 @@ class PDFHandler:
             except json.JSONDecodeError as e:
                 logger.error(f"❌ Error parsing JSON for {section_name} section: {e}")
                 logger.error(f"Raw response: {response_text}")
-                return None
+                raise Exception(f"JSON Parsing Error in {section_name}: {e}")
 
         except Exception as e:
             logger.error(f"❌ Error calling LLM for {section_name} section: {e}")
-            return None
+            raise Exception(f"LLM API Error in {section_name}: {str(e)}")
 
     def extract_basics_section(self, resume_text: str) -> Optional[Dict]:
         prompt = self.template_manager.render_template(
