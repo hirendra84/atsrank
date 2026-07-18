@@ -202,19 +202,18 @@ class PDFHandler:
             text_content = self.extract_text_from_pdf(pdf_path)
 
             if not text_content:
-                logger.error("❌ Failed to extract text from PDF")
-                return None
+                raise Exception("Failed to extract text from PDF (PyMuPDF might be failing).")
 
-            logger.debug(
-                f"✅ Successfully extracted {len(text_content)} characters from PDF"
-            )
-
+            logger.debug(f"✅ Successfully extracted {len(text_content)} characters from PDF")
             logger.debug("🔄 Extracting all sections separately...")
-            return self._extract_all_sections_separately(text_content)
-
+            
+            result = self._extract_all_sections_separately(text_content)
+            if not result:
+                raise Exception("LLM extraction failed for one or more sections. Check API keys or Vercel timeouts.")
+            return result
         except Exception as e:
             logger.error(f"❌ Error during PDF to JSON extraction: {e}")
-            return None
+            raise Exception(f"Detailed Error: {str(e)}")
 
     def _extract_section_data(
         self, text_content: str, section_name: str, return_model=None
