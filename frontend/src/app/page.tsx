@@ -221,7 +221,7 @@ export default function Home() {
   ];
 
   return (
-    <main className="min-h-screen bg-slate-50 text-slate-900 font-sans relative overflow-x-hidden">
+    <div className="bg-slate-50 text-slate-900 font-sans relative overflow-x-hidden flex-grow">
       {/* Background radial glow */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[600px] bg-gradient-to-b from-blue-50/70 via-indigo-50/20 to-transparent -z-10 rounded-full blur-3xl" />
 
@@ -597,25 +597,6 @@ export default function Home() {
 
       </div>
 
-      {/* Footer */}
-      <footer className="bg-white py-12 border-t border-slate-200">
-        <div className="max-w-6xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-6">
-          <Logo className="h-6 w-auto" />
-          <div className="flex flex-col items-center gap-1.5 md:items-start">
-            <p className="text-slate-500 text-xs">
-              © {new Date().getFullYear()} AtsRank. All rights reserved.
-            </p>
-            <p className="text-slate-400 text-xs flex items-center gap-1">
-              Made with ❤️ by <a href="https://hirendra.dev" target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:text-blue-600 font-medium hover:underline transition-colors">Hirendra.dev</a>
-            </p>
-          </div>
-          <div className="flex gap-6 text-xs text-slate-500 font-medium">
-            <Link href="/" className="hover:text-blue-600 transition-colors">Home</Link>
-            <Link href="/features" className="hover:text-blue-600 transition-colors">Features</Link>
-          </div>
-        </div>
-      </footer>
-
       {/* Auth Modal */}
       <AnimatePresence>
         {authModalOpen && (
@@ -751,7 +732,7 @@ export default function Home() {
           </div>
         )}
       </AnimatePresence>
-    </main>
+    </div>
   );
 }
 

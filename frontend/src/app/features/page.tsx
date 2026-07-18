@@ -71,7 +71,7 @@ export default function FeaturesPage() {
   const currentFeature = features.find(f => f.id === activeTab) || features[0];
 
   return (
-    <main className="min-h-screen bg-slate-50 text-slate-900 font-sans relative overflow-x-hidden">
+    <div className="bg-slate-50 text-slate-900 font-sans relative overflow-x-hidden flex-grow">
       {/* Background radial glow */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[600px] bg-gradient-to-b from-blue-50/70 via-indigo-50/20 to-transparent -z-10 rounded-full blur-3xl" />
 
@@ -210,19 +210,6 @@ export default function FeaturesPage() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-white py-12 border-t border-slate-200">
-        <div className="max-w-6xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-6">
-          <Logo className="h-6 w-auto" />
-          <p className="text-slate-500 text-xs">
-            © {new Date().getFullYear()} AtsRank. All rights reserved.
-          </p>
-          <div className="flex gap-6 text-xs text-slate-500 font-medium">
-            <Link href="/" className="hover:text-blue-600 transition-colors">Home</Link>
-            <Link href="/features" className="hover:text-blue-600 transition-colors">Features</Link>
-          </div>
-        </div>
-      </footer>
-    </main>
+    </div>
   );
 }
