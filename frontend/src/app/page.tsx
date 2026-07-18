@@ -18,89 +18,22 @@ export default function Home() {
   const [progress, setProgress] = useState(0);
   const [analyzingText, setAnalyzingText] = useState("Initializing...");
   
-  // Auth state
-  const [user, setUser] = useState<any | null>(null);
-  const [authModalOpen, setAuthModalOpen] = useState(false);
-  const [authMode, setAuthMode] = useState<"login" | "register">("login");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [authError, setAuthError] = useState<string | null>(null);
-  const [authLoading, setAuthLoading] = useState(false);
-
   // FAQ state
   const [faqOpen, setFaqOpen] = useState<number | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Fetch user profile on mount
   useEffect(() => {
-    fetchUserProfile();
+    const logoutHandler = () => {
+      setFile(null);
+      setResults(null);
+    };
+    window.addEventListener("userLoggedOut", logoutHandler);
+    return () => window.removeEventListener("userLoggedOut", logoutHandler);
   }, []);
-
-  const fetchUserProfile = async () => {
-    const token = localStorage.getItem("atsrank_token");
-    if (!token) return;
-
-    try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
-      const response = await axios.get(`${apiUrl}/api/users/me`, {
-        headers: { Authorization: fToken(token) }
-      });
-      setUser(response.data);
-      setScansRemaining(response.data.scans_remaining);
-    } catch (err) {
-      console.error("Session expired or invalid token", err);
-      localStorage.removeItem("atsrank_token");
-      setUser(null);
-    }
-  };
 
   const fToken = (token: string) => `Bearer ${token}`;
 
-  const handleLogout = () => {
-    localStorage.removeItem("atsrank_token");
-    setUser(null);
-    setScansRemaining(null);
-    setResults(null);
-    setFile(null);
-  };
-
-  const handleAuthSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setAuthLoading(true);
-    setAuthError(null);
-
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
-    const url = authMode === "login" 
-      ? `${apiUrl}/api/auth/login` 
-      : `${apiUrl}/api/auth/register`;
-
-    try {
-      const response = await axios.post(url, { email, password });
-      const { access_token, scans_remaining } = response.data;
-      localStorage.setItem("atsrank_token", access_token);
-      
-      setUser({ email });
-      setScansRemaining(scans_remaining);
-      setAuthModalOpen(false);
-      setEmail("");
-      setPassword("");
-    } catch (err: any) {
-      setAuthError(err.response?.data?.detail || "Authentication failed. Please check your credentials.");
-    } finally {
-      setAuthLoading(false);
-    }
-  };
-
-  const handleGithubLogin = () => {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
-    window.location.href = `${apiUrl}/api/auth/github/login`;
-  };
-
-  const handleGoogleLogin = () => {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
-    window.location.href = `${apiUrl}/api/auth/google/login`;
-  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -131,8 +64,7 @@ export default function Home() {
     // Force authentication
     const token = localStorage.getItem("atsrank_token");
     if (!token) {
-      setAuthMode("login");
-      setAuthModalOpen(true);
+      window.dispatchEvent(new Event("openAuthModal"));
       return;
     }
 
@@ -180,7 +112,7 @@ export default function Home() {
       setTimeout(() => {
         setResults(response.data);
         if (response.data.scans_remaining !== undefined) {
-          setScansRemaining(response.data.scans_remaining);
+          window.dispatchEvent(new CustomEvent("scansUpdated", { detail: response.data.scans_remaining }));
         }
         setLoading(false);
       }, 600);
@@ -224,56 +156,6 @@ export default function Home() {
     <div className="bg-slate-50 text-slate-900 font-sans relative overflow-x-hidden flex-grow">
       {/* Background radial glow */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[600px] bg-gradient-to-b from-blue-50/70 via-indigo-50/20 to-transparent -z-10 rounded-full blur-3xl" />
-
-      {/* Header */}
-      <header className="bg-white border-b border-slate-200 sticky top-0 z-40 backdrop-blur-md bg-white/90">
-        <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-          <Link href="/" className="hover:opacity-90 transition-opacity">
-            <Logo />
-          </Link>
-          <div className="flex items-center gap-6">
-            <nav className="flex gap-6 text-sm font-medium text-slate-600">
-              <Link href="/features" className="hover:text-blue-600 transition-colors">Features</Link>
-            </nav>
-            <div className="h-4 w-[1px] bg-slate-200" />
-            {user ? (
-              <div className="flex items-center gap-4">
-                <div className="hidden sm:flex flex-col text-right">
-                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Logged In</span>
-                  <span className="text-xs font-semibold text-slate-800 truncate max-w-[150px]">{user.email}</span>
-                </div>
-                {scansRemaining !== null && (
-                  <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
-                    {scansRemaining} scans left
-                  </span>
-                )}
-                <button 
-                  onClick={handleLogout}
-                  className="p-2 text-slate-500 hover:text-red-650 transition-colors hover:bg-slate-50 rounded-lg"
-                  title="Logout"
-                >
-                  <Icons8Icon name="logout" size={18} />
-                </button>
-              </div>
-            ) : (
-              <div className="flex gap-3">
-                <button 
-                  onClick={() => { setAuthMode("login"); setAuthModalOpen(true); }}
-                  className="text-sm font-semibold text-slate-700 hover:text-blue-600 px-3 py-1.5 transition-colors"
-                >
-                  Sign In
-                </button>
-                <button 
-                  onClick={() => { setAuthMode("register"); setAuthModalOpen(true); }}
-                  className="text-sm font-semibold bg-blue-600 text-white hover:bg-blue-700 px-4 py-1.5 rounded-xl transition-all shadow-md shadow-blue-500/20 active:scale-95"
-                >
-                  Sign Up
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-      </header>
 
       {/* Main content wrapper */}
       <div className="max-w-4xl mx-auto px-4 py-16">
@@ -597,141 +479,6 @@ export default function Home() {
 
       </div>
 
-      {/* Auth Modal */}
-      <AnimatePresence>
-        {authModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center">
-            {/* Overlay */}
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setAuthModalOpen(false)}
-              className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"
-            />
-            
-            {/* Modal Box */}
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-md bg-white border border-slate-200 rounded-3xl p-8 shadow-2xl z-10"
-            >
-              <button 
-                onClick={() => setAuthModalOpen(false)}
-                className="absolute top-6 right-6 text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-50 transition-colors"
-              >
-                <Icons8Icon name="close" size={18} />
-              </button>
-
-              <div className="text-center mb-6">
-                <h3 className="text-2xl font-bold text-slate-900">
-                  {authMode === "login" ? "Welcome back" : "Create your account"}
-                </h3>
-                <p className="text-slate-500 text-sm mt-1">
-                  {authMode === "login" ? "Sign in to scan and evaluate resumes" : "Get 3 free scans when you sign up today"}
-                </p>
-              </div>
-
-              {authError && (
-                <div className="mb-4 p-3.5 rounded-xl bg-red-555/10 border border-red-200 text-red-700 text-sm flex gap-2">
-                  <Icons8Icon name="warning" size={18} className="shrink-0 mt-0.5" />
-                  <span>{authError}</span>
-                </div>
-              )}
-
-              <form onSubmit={handleAuthSubmit} className="space-y-4">
-                <div>
-                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Email Address</label>
-                  <div className="relative flex items-center">
-                    <Icons8Icon name="mail" size={16} className="absolute left-3.5 text-slate-450" />
-                    <input 
-                      type="email" 
-                      required
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="you@example.com"
-                      className="w-full bg-slate-50/50 border border-slate-200 rounded-xl py-3 pl-11 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Password</label>
-                  <div className="relative flex items-center">
-                    <Icons8Icon name="lock" size={16} className="absolute left-3.5 text-slate-455" />
-                    <input 
-                      type="password" 
-                      required
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      placeholder="••••••••"
-                      className="w-full bg-slate-50/50 border border-slate-200 rounded-xl py-3 pl-11 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
-                    />
-                  </div>
-                </div>
-
-                <button 
-                  type="submit" 
-                  disabled={authLoading}
-                  className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-slate-200 disabled:text-slate-400 text-white font-bold py-3.5 rounded-xl transition-all shadow-md shadow-blue-500/10 active:scale-[0.98] mt-2 flex items-center justify-center gap-2"
-                >
-                  {authLoading && <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>}
-                  {authMode === "login" ? "Sign In" : "Sign Up"}
-                </button>
-              </form>
-
-              <div className="relative my-6 flex items-center justify-center">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-slate-100"></div>
-                </div>
-                <span className="relative px-3 bg-white text-xs text-slate-400 font-medium">Or continue with</span>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <button 
-                  onClick={handleGithubLogin}
-                  className="border border-slate-200 bg-white hover:bg-slate-50 text-slate-800 font-bold py-3 rounded-xl transition-all flex items-center justify-center gap-2 active:scale-[0.98] text-sm"
-                >
-                  <Icons8Icon name="github" size={18} />
-                  GitHub
-                </button>
-                <button 
-                  onClick={handleGoogleLogin}
-                  className="border border-slate-200 bg-white hover:bg-slate-50 text-slate-800 font-bold py-3 rounded-xl transition-all flex items-center justify-center gap-2 active:scale-[0.98] text-sm"
-                >
-                  <Icons8Icon name="google" size={18} />
-                  Google
-                </button>
-              </div>
-
-              <div className="text-center mt-6 text-sm text-slate-500">
-                {authMode === "login" ? (
-                  <>
-                    Don't have an account?{" "}
-                    <button 
-                      onClick={() => setAuthMode("register")}
-                      className="text-blue-600 font-bold hover:underline"
-                    >
-                      Sign Up
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    Already have an account?{" "}
-                    <button 
-                      onClick={() => setAuthMode("login")}
-                      className="text-blue-600 font-bold hover:underline"
-                    >
-                      Sign In
-                    </button>
-                  </>
-                )}
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
     </div>
   );
 }

@@ -29,7 +29,8 @@ export const ICONS8_STATIC_MAP = {
   "chevron-down": "15818",
   "chevron-left": "15820",
   google: "17935",
-  github: "16318"
+  github: "16318",
+  menu: "3096"
 };
 
 // Animated counterparts
