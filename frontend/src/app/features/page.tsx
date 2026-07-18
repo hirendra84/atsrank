@@ -75,26 +75,7 @@ export default function FeaturesPage() {
       {/* Background radial glow */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[600px] bg-gradient-to-b from-blue-50/70 via-indigo-50/20 to-transparent -z-10 rounded-full blur-3xl" />
 
-      {/* Header */}
-      <header className="bg-white border-b border-slate-200 sticky top-0 z-40 backdrop-blur-md bg-white/90">
-        <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-          <Link href="/" className="hover:opacity-90 transition-opacity">
-            <Logo />
-          </Link>
-          <div className="flex items-center gap-6">
-            <nav className="flex gap-6 text-sm font-medium text-slate-600">
-              <Link href="/features" className="text-blue-600 hover:text-blue-600 transition-colors">Features</Link>
-            </nav>
-            <div className="h-4 w-[1px] bg-slate-200" />
-            <Link 
-              href="/"
-              className="text-sm font-semibold bg-blue-600 text-white hover:bg-blue-700 px-4 py-1.5 rounded-xl transition-all shadow-md shadow-blue-500/20 active:scale-95 animate-pulse"
-            >
-              Analyze Now
-            </Link>
-          </div>
-        </div>
-      </header>
+
 
       {/* Hero Section */}
       <section className="max-w-4xl mx-auto px-4 pt-20 pb-16 text-center">
