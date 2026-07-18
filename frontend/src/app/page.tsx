@@ -601,9 +601,14 @@ export default function Home() {
       <footer className="bg-white py-12 border-t border-slate-200">
         <div className="max-w-6xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-6">
           <Logo className="h-6 w-auto" />
-          <p className="text-slate-500 text-xs">
-            © {new Date().getFullYear()} AtsRank. All rights reserved.
-          </p>
+          <div className="flex flex-col items-center gap-1.5 md:items-start">
+            <p className="text-slate-500 text-xs">
+              © {new Date().getFullYear()} AtsRank. All rights reserved.
+            </p>
+            <p className="text-slate-400 text-xs flex items-center gap-1">
+              Made with ❤️ by <a href="https://hirendra.dev" target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:text-blue-600 font-medium hover:underline transition-colors">Hirendra.dev</a>
+            </p>
+          </div>
           <div className="flex gap-6 text-xs text-slate-500 font-medium">
             <Link href="/" className="hover:text-blue-600 transition-colors">Home</Link>
             <Link href="/features" className="hover:text-blue-600 transition-colors">Features</Link>
